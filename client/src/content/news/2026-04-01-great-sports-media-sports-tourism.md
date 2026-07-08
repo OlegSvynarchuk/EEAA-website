@@ -5,7 +5,7 @@ title: "Connecting Sports, Media, and Tourism: EEAA Meets Great Sports Media"
 excerpt: "Representatives of the EEAA held a meeting with Great Sports Media Co., Ltd., a leading sports media and event operations company in China and a subsidiary of Shanghai Broadcasting Network and SMG."
 image: /images/news/great-sports-media-meeting.jpeg
 gallery: ["/images/news/great-sports-media-meeting-2.jpeg"]
-featured: true
+featured: false
 ---
 
 Representatives of the European Economic Alliance for Cooperation with Asia (EEAA) held a meeting with Great Sports Media Co., Ltd., a leading sports media and event operations company in China and a wholly owned subsidiary of Shanghai Broadcasting Network and Shanghai Cultural and Broadcasting-Television Media Group (SMG).

@@ -4,7 +4,7 @@ category: News
 title: "EEAA Visits Subotica and Explores Cooperation with Leading European Battery Manufacturer ElevenEs"
 excerpt: "EEAA representatives visited the City of Subotica for a meeting with ElevenEs, one of Europe's leading advanced battery manufacturers, discussing cooperation in green technologies, energy transition, and potential EEAA membership."
 image: /images/news/elevenes-subotica.jpeg
-featured: false
+featured: true
 ---
 
 Representatives of the European Economic Alliance for Cooperation with Asia (EEAA) visited the City of Subotica, where they held a meeting with senior representatives of ElevenEs, one of Europe's leading companies in the development and production of advanced battery technologies.
