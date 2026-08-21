@@ -1,5 +1,5 @@
 ---
-date: 2026-04-10
+date: 2026-08-21
 category: News
 title: "EEAA and Vrnjačka Banja Sign MoU on Strategic Cooperation"
 excerpt: "EEAA and the Municipality of Vrnjačka Banja signed a Memorandum of Understanding establishing a framework for strategic cooperation and the promotion of the spa destination on Asian markets."

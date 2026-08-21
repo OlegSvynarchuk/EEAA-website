@@ -1,5 +1,5 @@
 ---
-date: 2026-04-12
+date: 2026-08-21
 category: News
 title: "EEAA Holds Discussion with Professor Jeffrey D. Sachs"
 excerpt: "EEAA held a discussion with Professor Jeffrey D. Sachs, renowned American economist and public policy expert, on global economic developments and the evolving relationship between Europe, the United States and Asia."

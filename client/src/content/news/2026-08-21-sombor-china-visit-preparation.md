@@ -1,5 +1,5 @@
 ---
-date: 2026-04-11
+date: 2026-08-21
 category: News
 title: "EEAA Supports Sombor's Preparation for China Visit"
 excerpt: "EEAA held a meeting with representatives of the City of Sombor to discuss preparations for an upcoming official visit to China and the presentation of the city's investment potential to Chinese partners."

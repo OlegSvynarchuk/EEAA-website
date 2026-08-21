@@ -1,5 +1,5 @@
 ---
-date: 2026-04-09
+date: 2026-08-21
 category: News
 title: "EEAA and Sheraton Novi Sad Establish Corporate Partnership"
 excerpt: "EEAA representatives met with the management of Sheraton Novi Sad and agreed to establish a corporate partnership granting all EEAA premium members special accommodation rates throughout the year."
