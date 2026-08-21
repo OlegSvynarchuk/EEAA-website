@@ -307,13 +307,35 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 justify-center items-center">
-            <div className="border border-[var(--color-copper)] rounded-sm overflow-hidden hover:border-[var(--color-copper)]/50 transition-all group">
-              <img
-                src="/images/partners/ns-com-ex.jpeg"
-                alt="NS Com Partner"
-                className="w-full h-full object-cover"
-              />
-            </div>
+            {[
+              {
+                src: "/images/partners/ns-com-ex.jpeg",
+                alt: "Produktna berza ad Novi Sad",
+              },
+              {
+                src: "/images/partners/novosadski-sajam.png",
+                alt: "Novosadski sajam",
+              },
+              {
+                src: "/images/partners/sheraton.jpeg",
+                alt: "Sheraton Novi Sad",
+              },
+              {
+                src: "/images/partners/vrnjacka-banja.jpeg",
+                alt: "Municipality of Vrnjačka Banja",
+              },
+            ].map((partner) => (
+              <div
+                key={partner.src}
+                className="border border-[var(--color-copper)] rounded-sm overflow-hidden hover:border-[var(--color-copper)]/50 transition-all bg-white flex items-center justify-center aspect-[3/2] p-6"
+              >
+                <img
+                  src={partner.src}
+                  alt={partner.alt}
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
+            ))}
           </div>
         </div>
       </section>

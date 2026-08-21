@@ -399,10 +399,10 @@ export default function Layout({ children }: LayoutProps) {
                 <p>Vrnjačka Banja, Serbia</p>
                 <p className="pt-2">
                   <a
-                    href="mailto:info@eeaa.org"
+                    href="mailto:office@eeaa-alliance.com"
                     className="hover:text-[var(--color-copper)] transition-colors"
                   >
-                    info@eeaa.org
+                    office@eeaa-alliance.com
                   </a>
                 </p>
               </address>

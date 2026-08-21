@@ -217,10 +217,10 @@ export default function Contact() {
                       <div>
                         <h4 className="font-medium mb-1">Email</h4>
                         <a
-                          href="mailto:info@eeaa.org"
+                          href="mailto:office@eeaa-alliance.com"
                           className="text-white/70 text-sm hover:text-[var(--color-copper)] transition-colors"
                         >
-                          info@eeaa.org
+                          office@eeaa-alliance.com
                         </a>
                       </div>
                     </div>
