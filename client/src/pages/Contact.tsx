@@ -32,10 +32,20 @@ const contactReasons = [
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reason, setReason] = useState("");
+  const [reasonError, setReasonError] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
+
+    // The dropdown is not a native form control, so it needs its own check.
+    if (!reason) {
+      setReasonError(true);
+      toast.error("Please select an inquiry type.");
+      document.getElementById("reason")?.focus();
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -57,6 +67,7 @@ export default function Contact() {
       });
       form.reset();
       setReason("");
+      setReasonError(false);
     } catch (error) {
       toast.error("Message could not be sent.", {
         description:
@@ -116,6 +127,8 @@ export default function Contact() {
                     <Input
                       id="firstName"
                       name="firstName"
+                      maxLength={100}
+                      autoComplete="given-name"
                       placeholder="Enter your first name"
                       required
                       className="mt-2"
@@ -126,6 +139,8 @@ export default function Contact() {
                     <Input
                       id="lastName"
                       name="lastName"
+                      maxLength={100}
+                      autoComplete="family-name"
                       placeholder="Enter your last name"
                       required
                       className="mt-2"
@@ -139,6 +154,8 @@ export default function Contact() {
                     <Input
                       id="email"
                       name="email"
+                      maxLength={150}
+                      autoComplete="email"
                       type="email"
                       placeholder="Enter your email"
                       required
@@ -150,6 +167,8 @@ export default function Contact() {
                     <Input
                       id="phone"
                       name="phone"
+                      maxLength={60}
+                      autoComplete="tel"
                       type="tel"
                       placeholder="Enter your phone number"
                       className="mt-2"
@@ -162,6 +181,8 @@ export default function Contact() {
                   <Input
                     id="organization"
                     name="organization"
+                    maxLength={200}
+                    autoComplete="organization"
                     placeholder="Enter your organization name"
                     className="mt-2"
                   />
@@ -169,18 +190,34 @@ export default function Contact() {
 
                 <div>
                   <Label htmlFor="reason">Inquiry Type *</Label>
-                  <Select required value={reason} onValueChange={setReason}>
-                    <SelectTrigger id="reason" className="mt-2">
+                  <Select
+                    value={reason}
+                    onValueChange={value => {
+                      setReason(value);
+                      setReasonError(false);
+                    }}
+                  >
+                    <SelectTrigger
+                      id="reason"
+                      aria-required="true"
+                      aria-invalid={reasonError}
+                      className={`mt-2 ${reasonError ? "border-red-500" : ""}`}
+                    >
                       <SelectValue placeholder="Select inquiry type" />
                     </SelectTrigger>
                     <SelectContent>
-                      {contactReasons.map(reason => (
-                        <SelectItem key={reason.value} value={reason.value}>
-                          {reason.label}
+                      {contactReasons.map(item => (
+                        <SelectItem key={item.value} value={item.value}>
+                          {item.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
+                  {reasonError && (
+                    <p className="mt-2 text-sm text-red-600">
+                      Please select an inquiry type.
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -188,6 +225,7 @@ export default function Contact() {
                   <Input
                     id="subject"
                     name="subject"
+                    maxLength={200}
                     placeholder="Enter message subject"
                     required
                     className="mt-2"
@@ -199,11 +237,29 @@ export default function Contact() {
                   <Textarea
                     id="message"
                     name="message"
+                    maxLength={5000}
                     placeholder="Enter your message..."
                     rows={6}
                     required
                     className="mt-2"
                   />
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="consent"
+                    name="consent"
+                    required
+                    className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-copper)]"
+                  />
+                  <Label
+                    htmlFor="consent"
+                    className="text-sm font-normal leading-relaxed text-[var(--color-gray-cool)]"
+                  >
+                    I consent to EEAA storing and processing the details above
+                    in order to respond to my inquiry. *
+                  </Label>
                 </div>
 
                 <Button

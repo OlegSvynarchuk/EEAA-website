@@ -53,6 +53,12 @@ function isEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
 }
 
+/** Link-stuffed submissions are almost always bots, whatever the honeypot says. */
+function looksLikeSpam(text: string): boolean {
+  const links = text.match(/https?:\/\/|www\./gi)?.length ?? 0;
+  return links > 4 || /\[url=|\[\/url\]|<a\s+href=/i.test(text);
+}
+
 /** Strip CR/LF so user input can never inject extra mail headers. */
 function header(value: string): string {
   return value.replace(/[\r\n]+/g, " ").slice(0, 200);
@@ -137,6 +143,12 @@ export async function handleContact(req: Request, res: Response) {
       .json({ error: "Please complete all required fields." });
   }
 
+  // Accept silently so bots get no feedback about why the message vanished.
+  if (looksLikeSpam(message)) {
+    console.warn("Contact form: submission dropped as spam");
+    return res.json({ ok: true });
+  }
+
   const rows: [string, string][] = [
     ["Name", `${firstName} ${lastName}`],
     ["Email", email],
@@ -145,6 +157,7 @@ export async function handleContact(req: Request, res: Response) {
     ["Inquiry type", clean(req.body?.reason, 60)],
     ["Subject", clean(req.body?.subject, 200)],
     ["Message", message],
+    ["Consent given", req.body?.consent ? "yes" : "no"],
   ];
 
   try {
@@ -174,6 +187,15 @@ export async function handleMembership(req: Request, res: Response) {
       .json({ error: "Please complete all required fields." });
   }
 
+  if (
+    looksLikeSpam(
+      `${clean(req.body?.interests, 2000)} ${clean(req.body?.markets, 2000)}`
+    )
+  ) {
+    console.warn("Membership form: submission dropped as spam");
+    return res.json({ ok: true });
+  }
+
   const rows: [string, string][] = [
     ["Membership type", clean(req.body?.memberType, 60)],
     ["Organization", orgName],
@@ -189,6 +211,7 @@ export async function handleMembership(req: Request, res: Response) {
     ["Country", clean(req.body?.country, 100)],
     ["Areas of interest", clean(req.body?.interests, 2000)],
     ["Target markets", clean(req.body?.markets, 2000)],
+    ["Consent given", req.body?.consent ? "yes" : "no"],
   ];
 
   try {

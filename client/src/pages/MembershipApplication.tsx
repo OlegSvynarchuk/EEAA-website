@@ -47,11 +47,21 @@ export default function MembershipApplication() {
   const [memberType, setMemberType] = useState<string>("");
   const [orgType, setOrgType] = useState<string>("");
   const [industry, setIndustry] = useState<string>("");
+  const [selectError, setSelectError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
+
+    // Dropdowns are not native form controls, so they need their own checks.
+    if (memberType === "legal" && (!orgType || !industry)) {
+      setSelectError(true);
+      toast.error("Please select organization type and industry.");
+      document.getElementById(orgType ? "industry" : "orgType")?.focus();
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -75,6 +85,7 @@ export default function MembershipApplication() {
       setMemberType("");
       setOrgType("");
       setIndustry("");
+      setSelectError(false);
     } catch (error) {
       toast.error("Application could not be sent.", {
         description:
@@ -218,6 +229,8 @@ export default function MembershipApplication() {
                             <Input
                               id="orgName"
                               name="orgName"
+                              maxLength={200}
+                              autoComplete="organization"
                               placeholder="Enter organization name"
                               required
                               className="mt-2"
@@ -233,7 +246,12 @@ export default function MembershipApplication() {
                                 value={orgType}
                                 onValueChange={setOrgType}
                               >
-                                <SelectTrigger id="orgType" className="mt-2">
+                                <SelectTrigger
+                                  id="orgType"
+                                  aria-required="true"
+                                  aria-invalid={selectError}
+                                  className={`mt-2 ${selectError ? "border-red-500" : ""}`}
+                                >
                                   <SelectValue placeholder="Select type" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -261,7 +279,12 @@ export default function MembershipApplication() {
                                 value={industry}
                                 onValueChange={setIndustry}
                               >
-                                <SelectTrigger id="industry" className="mt-2">
+                                <SelectTrigger
+                                  id="industry"
+                                  aria-required="true"
+                                  aria-invalid={selectError}
+                                  className={`mt-2 ${selectError ? "border-red-500" : ""}`}
+                                >
                                   <SelectValue placeholder="Select industry" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -303,6 +326,8 @@ export default function MembershipApplication() {
                           <Input
                             id="firstName"
                             name="firstName"
+                            maxLength={100}
+                            autoComplete="given-name"
                             placeholder="Enter first name"
                             required
                             className="mt-2"
@@ -318,6 +343,8 @@ export default function MembershipApplication() {
                           <Input
                             id="lastName"
                             name="lastName"
+                            maxLength={100}
+                            autoComplete="family-name"
                             placeholder="Enter last name"
                             required
                             className="mt-2"
@@ -331,6 +358,8 @@ export default function MembershipApplication() {
                           <Input
                             id="position"
                             name="position"
+                            maxLength={150}
+                            autoComplete="organization-title"
                             placeholder="Enter position"
                             required
                             className="mt-2"
@@ -344,6 +373,8 @@ export default function MembershipApplication() {
                           <Input
                             id="email"
                             name="email"
+                            maxLength={150}
+                            autoComplete="email"
                             type="email"
                             placeholder="Enter email"
                             required
@@ -355,6 +386,8 @@ export default function MembershipApplication() {
                           <Input
                             id="phone"
                             name="phone"
+                            maxLength={60}
+                            autoComplete="tel"
                             type="tel"
                             placeholder="Enter phone number"
                             className="mt-2"
@@ -374,6 +407,8 @@ export default function MembershipApplication() {
                         <Input
                           id="address"
                           name="address"
+                          maxLength={300}
+                          autoComplete="street-address"
                           placeholder="Enter street address"
                           required
                           className="mt-2"
@@ -386,6 +421,8 @@ export default function MembershipApplication() {
                           <Input
                             id="city"
                             name="city"
+                            maxLength={100}
+                            autoComplete="address-level2"
                             placeholder="Enter city"
                             required
                             className="mt-2"
@@ -396,6 +433,8 @@ export default function MembershipApplication() {
                           <Input
                             id="postalCode"
                             name="postalCode"
+                            maxLength={40}
+                            autoComplete="postal-code"
                             placeholder="Enter postal code"
                             className="mt-2"
                           />
@@ -405,6 +444,8 @@ export default function MembershipApplication() {
                           <Input
                             id="country"
                             name="country"
+                            maxLength={100}
+                            autoComplete="country-name"
                             placeholder="Enter country"
                             required
                             className="mt-2"
@@ -427,6 +468,7 @@ export default function MembershipApplication() {
                         <Textarea
                           id="interests"
                           name="interests"
+                          maxLength={2000}
                           placeholder="Describe your interests, goals, and how EEAA can support your objectives..."
                           rows={4}
                           className="mt-2"
@@ -440,6 +482,7 @@ export default function MembershipApplication() {
                         <Input
                           id="markets"
                           name="markets"
+                          maxLength={2000}
                           placeholder="e.g., China, Japan, Korea, ASEAN, Central Asia"
                           className="mt-2"
                         />
@@ -455,6 +498,23 @@ export default function MembershipApplication() {
                           terms and conditions. Membership is subject to
                           approval and payment of the annual membership fee.
                         </p>
+                      </div>
+
+                      <div className="flex items-start gap-3 mb-6">
+                        <input
+                          type="checkbox"
+                          id="consent"
+                          name="consent"
+                          required
+                          className="mt-1 h-4 w-4 shrink-0 accent-[var(--color-copper)]"
+                        />
+                        <Label
+                          htmlFor="consent"
+                          className="text-sm font-normal leading-relaxed text-[var(--color-gray-cool)]"
+                        >
+                          I consent to EEAA storing and processing the details
+                          above in order to assess this application. *
+                        </Label>
                       </div>
 
                       <Button

@@ -11,6 +11,10 @@ async function startServer() {
   const app = express();
   const server = createServer(app);
 
+  // Behind Passenger/Apache every request arrives from 127.0.0.1, which would
+  // make the per-IP throttle apply to all visitors at once.
+  app.set("trust proxy", true);
+
   // Serve static files from dist/public in production
   const staticPath =
     process.env.NODE_ENV === "production"
