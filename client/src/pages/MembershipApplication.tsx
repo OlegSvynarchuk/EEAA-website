@@ -72,9 +72,15 @@ export default function MembershipApplication() {
         body: JSON.stringify({ ...payload, memberType, orgType, industry }),
       });
 
-      if (!response.ok) {
-        const { error } = await response.json().catch(() => ({}));
-        throw new Error(error || "Request failed");
+      // A misconfigured server can answer 200 with the SPA's HTML, so the
+      // response has to be real JSON before it counts as success.
+      const isJson = response.headers
+        .get("content-type")
+        ?.includes("application/json");
+      const result = isJson ? await response.json().catch(() => null) : null;
+
+      if (!response.ok || !result?.ok) {
+        throw new Error(result?.error || `Request failed (${response.status})`);
       }
 
       toast.success("Application submitted successfully!", {
