@@ -26,17 +26,30 @@ const transporter = mailConfigured
     })
   : null;
 
-/** Very small in-memory throttle: max 5 submissions per IP per 15 minutes. */
+/**
+ * Very small in-memory throttle: max 5 delivered messages per IP per 15
+ * minutes. Only successful sends are counted - a rejected submission is not
+ * the visitor's fault, so correcting a typo must not use up their quota.
+ */
 const hits = new Map<string, number[]>();
 const WINDOW_MS = 15 * 60 * 1000;
 const MAX_HITS = 5;
 
-function rateLimited(ip: string): boolean {
+function recentHits(ip: string): number[] {
   const now = Date.now();
   const recent = (hits.get(ip) || []).filter(t => now - t < WINDOW_MS);
-  recent.push(now);
   hits.set(ip, recent);
-  return recent.length > MAX_HITS;
+  return recent;
+}
+
+/** Read-only check - does not consume quota. */
+function rateLimited(ip: string): boolean {
+  return recentHits(ip).length >= MAX_HITS;
+}
+
+/** Call only once a message has actually been handed to the mail server. */
+function recordSend(ip: string): void {
+  recentHits(ip).push(Date.now());
 }
 
 function clean(value: unknown, maxLength = 2000): string {
@@ -166,6 +179,7 @@ export async function handleContact(req: Request, res: Response) {
       rows,
       email
     );
+    recordSend(req.ip || "unknown");
     res.json({ ok: true });
   } catch (error) {
     console.error("Contact form send failed:", error);
@@ -220,6 +234,7 @@ export async function handleMembership(req: Request, res: Response) {
       rows,
       email
     );
+    recordSend(req.ip || "unknown");
     res.json({ ok: true });
   } catch (error) {
     console.error("Membership form send failed:", error);
