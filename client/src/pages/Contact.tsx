@@ -31,20 +31,41 @@ const contactReasons = [
 
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reason, setReason] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const payload = Object.fromEntries(new FormData(form).entries());
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload, reason }),
+      });
 
-    toast.success("Message sent successfully!", {
-      description: "We will respond to your inquiry within 2-3 business days.",
-    });
+      if (!response.ok) {
+        const { error } = await response.json().catch(() => ({}));
+        throw new Error(error || "Request failed");
+      }
 
-    setIsSubmitting(false);
-    (e.target as HTMLFormElement).reset();
+      toast.success("Message sent successfully!", {
+        description:
+          "We will respond to your inquiry within 2-3 business days.",
+      });
+      form.reset();
+      setReason("");
+    } catch (error) {
+      toast.error("Message could not be sent.", {
+        description:
+          "Please try again, or email us directly at office@eeaa-alliance.com.",
+      });
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -79,11 +100,22 @@ export default function Contact() {
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Spam honeypot - hidden from users, ignored by the server when filled */}
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="hidden"
+                />
+
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <Label htmlFor="firstName">First Name *</Label>
                     <Input
                       id="firstName"
+                      name="firstName"
                       placeholder="Enter your first name"
                       required
                       className="mt-2"
@@ -93,6 +125,7 @@ export default function Contact() {
                     <Label htmlFor="lastName">Last Name *</Label>
                     <Input
                       id="lastName"
+                      name="lastName"
                       placeholder="Enter your last name"
                       required
                       className="mt-2"
@@ -105,6 +138,7 @@ export default function Contact() {
                     <Label htmlFor="email">Email Address *</Label>
                     <Input
                       id="email"
+                      name="email"
                       type="email"
                       placeholder="Enter your email"
                       required
@@ -115,6 +149,7 @@ export default function Contact() {
                     <Label htmlFor="phone">Phone Number</Label>
                     <Input
                       id="phone"
+                      name="phone"
                       type="tel"
                       placeholder="Enter your phone number"
                       className="mt-2"
@@ -126,6 +161,7 @@ export default function Contact() {
                   <Label htmlFor="organization">Organization</Label>
                   <Input
                     id="organization"
+                    name="organization"
                     placeholder="Enter your organization name"
                     className="mt-2"
                   />
@@ -133,12 +169,12 @@ export default function Contact() {
 
                 <div>
                   <Label htmlFor="reason">Inquiry Type *</Label>
-                  <Select required>
-                    <SelectTrigger className="mt-2">
+                  <Select required value={reason} onValueChange={setReason}>
+                    <SelectTrigger id="reason" className="mt-2">
                       <SelectValue placeholder="Select inquiry type" />
                     </SelectTrigger>
                     <SelectContent>
-                      {contactReasons.map((reason) => (
+                      {contactReasons.map(reason => (
                         <SelectItem key={reason.value} value={reason.value}>
                           {reason.label}
                         </SelectItem>
@@ -151,6 +187,7 @@ export default function Contact() {
                   <Label htmlFor="subject">Subject *</Label>
                   <Input
                     id="subject"
+                    name="subject"
                     placeholder="Enter message subject"
                     required
                     className="mt-2"
@@ -161,6 +198,7 @@ export default function Contact() {
                   <Label htmlFor="message">Message *</Label>
                   <Textarea
                     id="message"
+                    name="message"
                     placeholder="Enter your message..."
                     rows={6}
                     required

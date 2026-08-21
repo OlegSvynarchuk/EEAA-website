@@ -45,21 +45,45 @@ const applicationSteps = [
 
 export default function MembershipApplication() {
   const [memberType, setMemberType] = useState<string>("");
+  const [orgType, setOrgType] = useState<string>("");
+  const [industry, setIndustry] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const payload = Object.fromEntries(new FormData(form).entries());
+      const response = await fetch("/api/membership", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload, memberType, orgType, industry }),
+      });
 
-    toast.success("Application submitted successfully!", {
-      description:
-        "We will review your application and contact you within 5-7 business days.",
-    });
+      if (!response.ok) {
+        const { error } = await response.json().catch(() => ({}));
+        throw new Error(error || "Request failed");
+      }
 
-    setIsSubmitting(false);
+      toast.success("Application submitted successfully!", {
+        description:
+          "We will review your application and contact you within 5-7 business days.",
+      });
+      form.reset();
+      setMemberType("");
+      setOrgType("");
+      setIndustry("");
+    } catch (error) {
+      toast.error("Application could not be sent.", {
+        description:
+          "Please try again, or email us directly at office@eeaa-alliance.com.",
+      });
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -114,6 +138,16 @@ export default function MembershipApplication() {
             {/* Form */}
             <div className="lg:col-span-8">
               <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Spam honeypot - hidden from users, ignored by the server when filled */}
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="hidden"
+                />
+
                 {/* Member Type Selection */}
                 <div className="space-y-4">
                   <Label className="text-base font-medium text-[var(--color-navy)]">
@@ -183,6 +217,7 @@ export default function MembershipApplication() {
                             <Label htmlFor="orgName">Organization Name *</Label>
                             <Input
                               id="orgName"
+                              name="orgName"
                               placeholder="Enter organization name"
                               required
                               className="mt-2"
@@ -190,13 +225,21 @@ export default function MembershipApplication() {
                           </div>
                           <div className="grid md:grid-cols-2 gap-4">
                             <div>
-                              <Label htmlFor="orgType">Organization Type *</Label>
-                              <Select required>
-                                <SelectTrigger className="mt-2">
+                              <Label htmlFor="orgType">
+                                Organization Type *
+                              </Label>
+                              <Select
+                                required
+                                value={orgType}
+                                onValueChange={setOrgType}
+                              >
+                                <SelectTrigger id="orgType" className="mt-2">
                                   <SelectValue placeholder="Select type" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="company">Company</SelectItem>
+                                  <SelectItem value="company">
+                                    Company
+                                  </SelectItem>
                                   <SelectItem value="institution">
                                     Institution
                                   </SelectItem>
@@ -213,8 +256,12 @@ export default function MembershipApplication() {
                             </div>
                             <div>
                               <Label htmlFor="industry">Industry *</Label>
-                              <Select required>
-                                <SelectTrigger className="mt-2">
+                              <Select
+                                required
+                                value={industry}
+                                onValueChange={setIndustry}
+                              >
+                                <SelectTrigger id="industry" className="mt-2">
                                   <SelectValue placeholder="Select industry" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -224,7 +271,9 @@ export default function MembershipApplication() {
                                   <SelectItem value="technology">
                                     Technology
                                   </SelectItem>
-                                  <SelectItem value="finance">Finance</SelectItem>
+                                  <SelectItem value="finance">
+                                    Finance
+                                  </SelectItem>
                                   <SelectItem value="trade">Trade</SelectItem>
                                   <SelectItem value="logistics">
                                     Logistics
@@ -253,6 +302,7 @@ export default function MembershipApplication() {
                           </Label>
                           <Input
                             id="firstName"
+                            name="firstName"
                             placeholder="Enter first name"
                             required
                             className="mt-2"
@@ -267,6 +317,7 @@ export default function MembershipApplication() {
                           </Label>
                           <Input
                             id="lastName"
+                            name="lastName"
                             placeholder="Enter last name"
                             required
                             className="mt-2"
@@ -279,6 +330,7 @@ export default function MembershipApplication() {
                           <Label htmlFor="position">Position/Title *</Label>
                           <Input
                             id="position"
+                            name="position"
                             placeholder="Enter position"
                             required
                             className="mt-2"
@@ -291,6 +343,7 @@ export default function MembershipApplication() {
                           <Label htmlFor="email">Email Address *</Label>
                           <Input
                             id="email"
+                            name="email"
                             type="email"
                             placeholder="Enter email"
                             required
@@ -301,6 +354,7 @@ export default function MembershipApplication() {
                           <Label htmlFor="phone">Phone Number</Label>
                           <Input
                             id="phone"
+                            name="phone"
                             type="tel"
                             placeholder="Enter phone number"
                             className="mt-2"
@@ -319,6 +373,7 @@ export default function MembershipApplication() {
                         <Label htmlFor="address">Street Address *</Label>
                         <Input
                           id="address"
+                          name="address"
                           placeholder="Enter street address"
                           required
                           className="mt-2"
@@ -330,6 +385,7 @@ export default function MembershipApplication() {
                           <Label htmlFor="city">City *</Label>
                           <Input
                             id="city"
+                            name="city"
                             placeholder="Enter city"
                             required
                             className="mt-2"
@@ -339,6 +395,7 @@ export default function MembershipApplication() {
                           <Label htmlFor="postalCode">Postal Code</Label>
                           <Input
                             id="postalCode"
+                            name="postalCode"
                             placeholder="Enter postal code"
                             className="mt-2"
                           />
@@ -347,6 +404,7 @@ export default function MembershipApplication() {
                           <Label htmlFor="country">Country *</Label>
                           <Input
                             id="country"
+                            name="country"
                             placeholder="Enter country"
                             required
                             className="mt-2"
@@ -368,6 +426,7 @@ export default function MembershipApplication() {
                         </Label>
                         <Textarea
                           id="interests"
+                          name="interests"
                           placeholder="Describe your interests, goals, and how EEAA can support your objectives..."
                           rows={4}
                           className="mt-2"
@@ -380,6 +439,7 @@ export default function MembershipApplication() {
                         </Label>
                         <Input
                           id="markets"
+                          name="markets"
                           placeholder="e.g., China, Japan, Korea, ASEAN, Central Asia"
                           className="mt-2"
                         />

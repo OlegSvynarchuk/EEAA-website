@@ -2,6 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
+import { handleContact, handleMembership, mailConfigured } from "./mail.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,6 +19,11 @@ async function startServer() {
 
   app.use(express.static(staticPath));
 
+  // Form endpoints - must be registered before the SPA catch-all
+  app.use(express.json({ limit: "100kb" }));
+  app.post("/api/contact", handleContact);
+  app.post("/api/membership", handleMembership);
+
   // Handle client-side routing - serve index.html for all routes
   app.get("*", (_req, res) => {
     res.sendFile(path.join(staticPath, "index.html"));
@@ -27,6 +33,11 @@ async function startServer() {
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
+    if (!mailConfigured) {
+      console.warn(
+        "Warning: SMTP environment variables are missing - contact and membership forms will return an error."
+      );
+    }
   });
 }
 
