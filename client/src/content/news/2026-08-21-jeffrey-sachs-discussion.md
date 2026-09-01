@@ -4,7 +4,7 @@ category: News
 title: "EEAA Holds Discussion with Professor Jeffrey D. Sachs"
 excerpt: "EEAA held a discussion with Professor Jeffrey D. Sachs, renowned American economist and public policy expert, on global economic developments and the evolving relationship between Europe, the United States and Asia."
 image: /images/news/jeffrey-sachs-discussion.jpeg
-featured: true
+featured: false
 ---
 
 The European Economic Alliance for Cooperation with Asia (EEAA) held a discussion with Professor Jeffrey D. Sachs, renowned American economist, academic and public policy expert and one of the leading figures in international analytics of business affairs.
