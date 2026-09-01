@@ -8,6 +8,7 @@
 import { Link } from "wouter";
 import { ArrowRight, Globe, Briefcase, TrendingUp, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import PartnersSlider from "@/components/PartnersSlider";
 
 const valueBlocks = [
   {
@@ -306,57 +307,7 @@ export default function Home() {
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 justify-center items-center">
-            {[
-              {
-                src: "/images/partners/pixels2pixels.png",
-                alt: "Pixels2Pixels",
-                href: "https://pixels2pixels.com",
-              },
-              {
-                src: "/images/partners/ns-com-ex.jpeg",
-                alt: "Produktna berza ad Novi Sad",
-              },
-              {
-                src: "/images/partners/novosadski-sajam.png",
-                alt: "Novosadski sajam",
-              },
-              {
-                src: "/images/partners/sheraton.jpeg",
-                alt: "Sheraton Novi Sad",
-              },
-              {
-                src: "/images/partners/vrnjacka-banja.jpeg",
-                alt: "Municipality of Vrnjačka Banja",
-              },
-            ].map(partner => {
-              const tileClass =
-                "border border-[var(--color-copper)] rounded-sm overflow-hidden hover:border-[var(--color-copper)]/50 transition-all bg-white flex items-center justify-center aspect-[3/2] p-6";
-              const logo = (
-                <img
-                  src={partner.src}
-                  alt={partner.alt}
-                  className="max-w-full max-h-full object-contain"
-                />
-              );
-
-              return partner.href ? (
-                <a
-                  key={partner.src}
-                  href={partner.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={tileClass}
-                >
-                  {logo}
-                </a>
-              ) : (
-                <div key={partner.src} className={tileClass}>
-                  {logo}
-                </div>
-              );
-            })}
-          </div>
+          <PartnersSlider />
         </div>
       </section>
 
