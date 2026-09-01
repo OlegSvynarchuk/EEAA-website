@@ -30,8 +30,8 @@ const board = [
     highlight: false,
   },
   {
-    name: "Zlatko Edelinski",
-    role: "Vice President for Foreign Investment, Agribusiness & Tourism",
+    name: "Florian Fimbel",
+    role: "Vice President",
     org: "European Economic Alliance for Cooperation with Asia",
     highlight: false,
   },
