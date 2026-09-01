@@ -309,6 +309,11 @@ export default function Home() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 justify-center items-center">
             {[
               {
+                src: "/images/partners/pixels2pixels.png",
+                alt: "Pixels2Pixels",
+                href: "https://pixels2pixels.com",
+              },
+              {
                 src: "/images/partners/ns-com-ex.jpeg",
                 alt: "Produktna berza ad Novi Sad",
               },
@@ -324,18 +329,33 @@ export default function Home() {
                 src: "/images/partners/vrnjacka-banja.jpeg",
                 alt: "Municipality of Vrnjačka Banja",
               },
-            ].map((partner) => (
-              <div
-                key={partner.src}
-                className="border border-[var(--color-copper)] rounded-sm overflow-hidden hover:border-[var(--color-copper)]/50 transition-all bg-white flex items-center justify-center aspect-[3/2] p-6"
-              >
+            ].map(partner => {
+              const tileClass =
+                "border border-[var(--color-copper)] rounded-sm overflow-hidden hover:border-[var(--color-copper)]/50 transition-all bg-white flex items-center justify-center aspect-[3/2] p-6";
+              const logo = (
                 <img
                   src={partner.src}
                   alt={partner.alt}
                   className="max-w-full max-h-full object-contain"
                 />
-              </div>
-            ))}
+              );
+
+              return partner.href ? (
+                <a
+                  key={partner.src}
+                  href={partner.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={tileClass}
+                >
+                  {logo}
+                </a>
+              ) : (
+                <div key={partner.src} className={tileClass}>
+                  {logo}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
