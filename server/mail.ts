@@ -13,7 +13,21 @@ const {
   SMTP_PASS,
   MAIL_FROM,
   MAIL_TO,
+  MAIL_DEBUG,
 } = process.env;
+
+/** Set MAIL_DEBUG=1 temporarily to surface the SMTP error to the caller. */
+const debugMail = MAIL_DEBUG === "1";
+
+function detail(error: unknown): Record<string, string> {
+  if (!debugMail) return {};
+  const e = error as { message?: string; code?: string; response?: string };
+  return {
+    detail: e?.message || String(error),
+    code: e?.code || "",
+    response: e?.response || "",
+  };
+}
 
 export const mailConfigured = Boolean(SMTP_USER && SMTP_PASS && MAIL_TO);
 
@@ -183,7 +197,9 @@ export async function handleContact(req: Request, res: Response) {
     res.json({ ok: true });
   } catch (error) {
     console.error("Contact form send failed:", error);
-    res.status(502).json({ error: "Message could not be sent." });
+    res
+      .status(502)
+      .json({ error: "Message could not be sent.", ...detail(error) });
   }
 }
 
@@ -238,6 +254,32 @@ export async function handleMembership(req: Request, res: Response) {
     res.json({ ok: true });
   } catch (error) {
     console.error("Membership form send failed:", error);
-    res.status(502).json({ error: "Application could not be sent." });
+    res
+      .status(502)
+      .json({ error: "Application could not be sent.", ...detail(error) });
+  }
+}
+
+/** Diagnostic: reports which settings are in use, never the password. */
+export async function handleMailHealth(_req: Request, res: Response) {
+  if (!debugMail) return res.status(404).json({ error: "Not found" });
+
+  const config = {
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    user: SMTP_USER,
+    from: MAIL_FROM,
+    to: MAIL_TO,
+    passwordSet: Boolean(SMTP_PASS),
+    passwordLength: SMTP_PASS ? SMTP_PASS.length : 0,
+  };
+
+  if (!transporter) return res.json({ ok: false, config });
+
+  try {
+    await transporter.verify();
+    res.json({ ok: true, config });
+  } catch (error) {
+    res.json({ ok: false, config, ...detail(error) });
   }
 }

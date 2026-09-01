@@ -2,7 +2,12 @@ import express from "express";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
-import { handleContact, handleMembership, mailConfigured } from "./mail.js";
+import {
+  handleContact,
+  handleMembership,
+  handleMailHealth,
+  mailConfigured,
+} from "./mail.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,6 +32,7 @@ async function startServer() {
   app.use(express.json({ limit: "100kb" }));
   app.post("/api/contact", handleContact);
   app.post("/api/membership", handleMembership);
+  app.get("/api/mail-health", handleMailHealth);
 
   // Handle client-side routing - serve index.html for all routes
   app.get("*", (_req, res) => {
